@@ -1,8 +1,7 @@
 import { confirmEmailDto, loginDto, reSendOTPDto, signUpDto, signUpWithGmailDto } from "./dto";
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
-import { Types } from "mongoose";
-import { OTP_Repository, TokenRepository, UserDocument, UserRepository } from "src/DATABASE";
+import { OTP_Repository, UserDocument, UserRepository } from "src/DATABASE";
 import { compareHash, EmailEventsEnum, generateOTP, OTP_TypeEnum, ProviderEnum } from "src/common";
 import { TokenService } from "src/common/services/token.service";
 import { CredentialsType } from "src/common/types/types";

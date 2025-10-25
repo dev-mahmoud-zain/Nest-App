@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { RoleEnum } from "../enums";
 import {
@@ -15,7 +15,6 @@ import {
 } from "src/DATABASE";
 import { randomUUID } from "crypto";
 import { JwtPayload } from "jsonwebtoken";
-import { Mongoose } from "mongoose";
 
 @Injectable()
 export class TokenService {
@@ -113,6 +112,8 @@ export class TokenService {
     decodeToken = async ({ authorization,
         tokenType = TokenTypeEnum.access }:
         { authorization: string, tokenType: TokenTypeEnum }) => {
+
+            
 
         try {
 

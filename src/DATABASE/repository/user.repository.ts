@@ -1,8 +1,9 @@
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "../models";
 import { DatabaseRepository } from "./database.repository";
-import { Model, ProjectionType, QueryOptions, RootFilterQuery } from "mongoose";
+import { Model, ProjectionType, QueryOptions, RootFilterQuery, Types } from "mongoose";
 import { NotFoundException } from "@nestjs/common";
+import { IUser } from "src/common";
 
 export class UserRepository extends DatabaseRepository<User> {
 
@@ -13,17 +14,20 @@ export class UserRepository extends DatabaseRepository<User> {
         super(model)
     }
 
+
+
+
     getUser = async (
         {
-                filter,
-                select,
-                options
-            }: {
-                filter?: RootFilterQuery<UserDocument>,
-                select?: ProjectionType<UserDocument> | null,
-                options?: QueryOptions<UserDocument> & { populate?: any } | null
-            }
-    ):Promise<UserDocument> => {
+            filter,
+            select,
+            options
+        }: {
+            filter?: RootFilterQuery<UserDocument>,
+            select?: ProjectionType<UserDocument> | null,
+            options?: QueryOptions<UserDocument> & { populate?: any } | null
+        }
+    ): Promise<UserDocument> => {
 
         const user = await this.findOne({
             filter,
@@ -36,6 +40,24 @@ export class UserRepository extends DatabaseRepository<User> {
         }
 
         return user;
+
+    }
+
+    getProfile = async (_id: Types.ObjectId) => {
+
+        const user: UserDocument = await this.getUser({
+            filter: {
+                _id
+            },
+            select: "-password -createdAt -updatedAt -emailConfirmedAt -provider -profilePicture.public_id"
+        })
+
+        const responseUser = {
+            ...user.toObject(),
+            profilePicture: user.profilePicture?.url || null,
+        }
+
+        return responseUser
 
     }
 

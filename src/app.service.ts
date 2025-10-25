@@ -4,8 +4,14 @@ import { Injectable } from '@nestjs/common';
 export class AppService {
 
 
-  getHello(): string {
-    return 'Hello Nest Js!';
+  getHello(): {
+    message: string,
+    info: string
+  } {
+    return {
+      message: 'Welcome to the E-Commerce Application',
+      info: 'This project marks my first experience developing with NestJS.'
+    };
   }
 
 

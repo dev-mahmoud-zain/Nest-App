@@ -5,6 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { usersModule } from './modules/users';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BrandModule } from './modules/brand/brand.module';
 
 
 
@@ -12,9 +13,11 @@ import { MongooseModule } from '@nestjs/mongoose';
   imports: [
     ConfigModule.forRoot({ envFilePath: "./config/.env", isGlobal: true })
     , AuthModule
-    , usersModule ,
-  MongooseModule.forRoot(process.env.DB_URL as string,)],
-    
+    , usersModule,
+    BrandModule,
+    MongooseModule.forRoot(process.env.DB_URL as string,),
+  ],
+
   controllers: [AppController],
   providers: [AppService],
 })

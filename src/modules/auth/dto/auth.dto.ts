@@ -2,7 +2,6 @@ import {
     IsEmail,
     IsEnum,
     IsNotEmpty,
-    IsOptional,
     IsString,
     IsStrongPassword,
     Length,
@@ -32,7 +31,7 @@ export class loginDto {
     @IsStrongPassword({}, { message: 'Password is not strong enough.' })
     @IsNotEmpty({ message: 'Password is required.' })
     password: string;
-
+    
 }
 
 export class signUpDto extends loginDto {
@@ -63,7 +62,6 @@ export class confirmEmailDto extends reSendOTPDto {
     OTP_Code: string
 
 }
-
 
 export class signUpWithGmailDto {
     @IsString()

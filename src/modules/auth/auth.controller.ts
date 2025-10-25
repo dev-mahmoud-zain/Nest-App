@@ -1,6 +1,7 @@
 import { Body, Controller, Injectable, Post, ValidationPipe } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { confirmEmailDto, loginDto, reSendOTPDto, signUpDto, signUpWithGmailDto } from "./dto";
+import { delay, of } from "rxjs";
 
 
 @Injectable()
@@ -60,7 +61,7 @@ export class AuthController {
 
         const credentials = await this.authService.login(body);
 
-        return {
+        return{
             message: "Login Success",
             credentials
         }

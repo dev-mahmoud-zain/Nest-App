@@ -1,5 +1,6 @@
 import { MongooseModule, Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose"
 import { HydratedDocument, UpdateQuery } from "mongoose";
+import { IUser } from "src/common";
 import { GenderEnum, ProviderEnum, RoleEnum } from "src/common/enums";
 import { generateHash } from "src/common/utils";
 
@@ -9,7 +10,7 @@ import { generateHash } from "src/common/utils";
     toObject: { virtuals: true },
     strictQuery: true
 })
-export class User {
+export class User implements IUser{
 
     @Prop({ type: String, min: 2, max: 30, required: true })
     firstName: string
@@ -52,6 +53,19 @@ export class User {
 
     @Prop({ type: Date, required: false })
     changeCredentialsTime: Date
+
+    @Prop({
+        type: {
+            url: { type: String },
+            public_id: { type: String },
+        },
+        _id: false,
+        default: null,
+    })
+    profilePicture: {
+        url: string;
+        public_id: string;
+    };
 
 }
 

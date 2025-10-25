@@ -5,13 +5,25 @@ import { OTP_Repository, TokenModel, TokenRepository, UserModel, UserRepository 
 import { OTP_Model } from "src/DATABASE/models/otp.model";
 import { TokenService } from "src/common/services/token.service";
 import { JwtService } from "@nestjs/jwt";
-
+import { UsersService } from "../users/users.service";
 
 @Module({
     imports: [UserModel, OTP_Model, TokenModel],
-    exports: [],
+    exports: [UserRepository,
+        UsersService,
+        OTP_Repository,
+        TokenRepository,
+        TokenService,
+        JwtService],
     controllers: [AuthController],
-    providers: [AuthService, UserRepository, OTP_Repository, TokenRepository, TokenService, JwtService]
+    providers: [
+        AuthService,
+        UserRepository,
+        UsersService,
+        OTP_Repository,
+        TokenRepository,
+        TokenService,
+        JwtService]
 })
 export class AuthModule {
 }

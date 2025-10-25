@@ -1,6 +1,6 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
-import { generateHash, OTP_TypeEnum } from "src/common";
+import { generateHash, I_OTP, OTP_TypeEnum } from "src/common";
 
 @Schema({
     timestamps: true,
@@ -8,7 +8,7 @@ import { generateHash, OTP_TypeEnum } from "src/common";
     toObject: { virtuals: true },
     strictQuery: true
 })
-export class OTP {
+export class OTP implements I_OTP{
     @Prop({ type: String, required: true })
     code: string
 
