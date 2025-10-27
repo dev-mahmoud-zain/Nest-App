@@ -15,10 +15,10 @@ export class Brand implements IBrand {
     @Prop({ type: String, required: true, unique: true, min: 2, maxLength: 25 })
     name: string;
 
-    @Prop({ type: String ,min: 2, maxLength: 50 })
+    @Prop({ type: String, min: 2, maxLength: 50 })
     slug: string;
 
-    @Prop({ type: String, required: true ,min: 2, maxLength: 50 })
+    @Prop({ type: String, required: true, min: 2, maxLength: 50 })
     slogan: string;
 
     @Prop({
@@ -34,11 +34,24 @@ export class Brand implements IBrand {
         public_id: string,
     };
 
+
     @Prop({ type: Types.ObjectId, ref: "User", required: true })
     createdBy: Types.ObjectId
 
     @Prop({ type: Types.ObjectId, ref: "User" })
     updatedBy: Types.ObjectId
+
+    @Prop({ type: Date })
+    freezedAt?: Date;
+
+    @Prop({ type: Types.ObjectId, ref: "User" })
+    freezedBy?: Types.ObjectId;
+
+    @Prop({ type: Date })
+    restoredAt?: Date;
+
+    @Prop({ type: Types.ObjectId, ref: "User" })
+    restoredBy?: Types.ObjectId;
 
 };
 

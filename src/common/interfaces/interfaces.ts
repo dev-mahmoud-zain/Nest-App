@@ -72,10 +72,17 @@ export interface IBrand {
     createdBy: Types.ObjectId,
     updatedBy?: Types.ObjectId,
 
-    image:  {
+    image?:  {
         url: string,
         public_id: string,
     },
+
+
+    freezedAt?: Date,
+    freezedBy?: Types.ObjectId,
+
+    restoredAt?: Date,
+    restoredBy?: Types.ObjectId,
 
     createdAt?: Date,
     updatedAt?: Date,

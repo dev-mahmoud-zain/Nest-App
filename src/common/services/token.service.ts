@@ -67,8 +67,11 @@ export class TokenService {
         payload,
         options = {
             secret: process.env.ACCESS_USER_TOKEN_SIGNATURE as string,
-            expiresIn: 60 * 60
+            expiresIn: parseInt(process.env.ACCESS_TOKEN_EXPIRES_TIME as string)
         } }: IGenerateToken) => {
+
+        console.log(process.env.ACCESS_TOKEN_EXPIRES_TIME)
+
         return await this.jwtService.signAsync(payload, options)
     }
 
@@ -92,7 +95,8 @@ export class TokenService {
             payload: { _id: user._id, role: user.role },
             options: {
                 secret: signatures.access_signature,
-                expiresIn: "1h", jwtid
+                expiresIn: parseInt(process.env.ACCESS_TOKEN_EXPIRES_TIME as string),
+                jwtid
             }
         })
 
@@ -113,7 +117,7 @@ export class TokenService {
         tokenType = TokenTypeEnum.access }:
         { authorization: string, tokenType: TokenTypeEnum }) => {
 
-            
+
 
         try {
 

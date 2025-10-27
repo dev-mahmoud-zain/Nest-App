@@ -35,20 +35,30 @@ export abstract class DatabaseRepository<TRawDocument,
         return await this.model.create(data, options)
     }
 
+
+
     async findOne({
         filter,
         select,
-        options
+        options,
+        pranoId
     }: {
         filter?: RootFilterQuery<TDocument>,
         select?: ProjectionType<TDocument> | null,
-        options?: QueryOptions<TDocument> & { populate?: any } | null
+        options?: QueryOptions<TDocument> & { populate?: any } | null,
+        pranoId?: boolean
     }): Promise<
         FlattenMaps<TDocument>
         | TDocument
         | null> {
 
-        const doc = this.model.findOne(filter).select(select || "");
+        const finalFilter = pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
+
+        const doc = this.model.findOne(finalFilter).select(select || "");
 
         if (options?.lean) {
             doc.lean(options.lean)
@@ -57,6 +67,7 @@ export abstract class DatabaseRepository<TRawDocument,
         if (options?.populate) {
             doc.populate(options.populate);
         }
+
         return await doc.exec();
     }
 
@@ -66,35 +77,43 @@ export abstract class DatabaseRepository<TRawDocument,
         options = {},
         page = 1,
         limit = 10,
-        sort = {}
+        sort = {},
+        pranoId
     }: {
         filter?: FilterQuery<TDocument>,
         projection?: ProjectionType<TDocument> | null,
         options?: QueryOptions,
         page?: number,
         limit?: number,
-        sort?: Record<string, 1 | -1>
+        sort?: Record<string, 1 | -1>,
+        pranoId?: boolean
     }) {
+
+        const finalFilter = pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
 
         const skip = (page - 1) * limit;
 
         const [data, total] = await Promise.all([
-            this.model.find(filter, projection, {
+            this.model.find(finalFilter, projection, {
                 ...options,
                 skip,
                 limit,
-                sort
+                sort,
             }).exec(),
-            this.model.countDocuments(filter).exec()
+            this.model.countDocuments(finalFilter).exec()
         ]);
 
         return {
             data,
             pagination: {
                 page,
-                totalPages: Math.ceil(total / limit),
                 limit,
-                totalPosts: total
+                totalPages: Math.ceil(total / limit),
+                total: total
             }
         };
     }
@@ -102,11 +121,16 @@ export abstract class DatabaseRepository<TRawDocument,
     async updateOne(
         filter: FilterQuery<TDocument>,
         updateData: UpdateQuery<TDocument>,
-        options?: MongooseUpdateQueryOptions<TDocument> | null
+        options?: (MongooseUpdateQueryOptions<TDocument> & { pranoId?: boolean }) | null
     ): Promise<UpdateWriteOpResult> {
 
-        if (Array.isArray(updateData)) {
+        const finalFilter = options?.pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
 
+        if (Array.isArray(updateData)) {
             updateData.push({
                 $set: {
                     __v: { $add: ["$__v", 1] }
@@ -114,7 +138,7 @@ export abstract class DatabaseRepository<TRawDocument,
             })
 
             return await this.model.updateOne(
-                filter || {},
+                finalFilter,
                 updateData,
                 options
             );
@@ -122,76 +146,109 @@ export abstract class DatabaseRepository<TRawDocument,
         }
 
         return await this.model.updateOne(
-            filter || {},
+            finalFilter,
             {
                 ...updateData,
                 $inc: { __v: 1 }
             },
             options
         );
-
     }
 
     async findOneAndUpdate(
         {
             filter,
             updateData,
-            options
+            options,
+            pranoId,
         }: {
             filter?: RootFilterQuery<TDocument>,
             updateData: UpdateQuery<TDocument>,
-            options?: QueryOptions<TDocument> | null
-        }): Promise<TDocument | null> {
+            options?: QueryOptions<TDocument> | null,
+            pranoId?: boolean,
+        }
+    ): Promise<TDocument | null> {
 
-        const updatedDoc = await this.model.findOneAndUpdate(
-            filter,
-            {
-                ...updateData,
-                $inc: { __v: 1 }
-            },
-            options
-        ).exec();
+        const finalFilter = pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false },
+        };
+
+        const updatedDoc = await this.model
+            .findOneAndUpdate(
+                finalFilter,
+                {
+                    ...updateData,
+                    $inc: { __v: 1 },
+                },
+                {
+                    ...options,
+                    new: true,
+                    returnDocument: 'after',
+                },
+            )
+            .exec();
 
         return updatedDoc;
     }
 
-    async updateMany(
-        filter: FilterQuery<TDocument>,
-        updateData: UpdateQuery<TDocument>,
-        options: UpdateOptionsFixed = {}
-    ) {
-        return this.model.updateMany(filter, updateData, options).exec();
-    }
+
+
 
     async deleteOne(
-        filter: FilterQuery<TDocument>
+        filter: FilterQuery<TDocument>,
+        options?: { pranoId?: boolean }
     ) {
+        const finalFilter = options?.pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
 
-        return this.model.deleteOne(filter)
+        return this.model.deleteOne(finalFilter);
     }
 
     async deleteMany(
-        filter: FilterQuery<TDocument>
+        filter: FilterQuery<TDocument>,
+        options?: { pranoId?: boolean }
     ) {
-        return this.model.deleteMany(filter);
+        const finalFilter = options?.pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
+
+        return this.model.deleteMany(finalFilter);
     }
 
     async findOneAndDelete(
         {
             filter,
-            options
+            options,
+            pranoId
         }: {
             filter?: RootFilterQuery<TDocument>,
-            options?: QueryOptions<TDocument> | null
+            options?: QueryOptions<TDocument> | null,
+            pranoId?: boolean
         }
     ): Promise<TDocument | null> {
 
+        const finalFilter = pranoId ? filter : {
+            ...filter,
+            freezedAt: { $exists: false },
+            freezedBy: { $exists: false }
+        };
+
         const deletedDoc = await this.model.findOneAndDelete(
-            filter,
+            finalFilter,
             options || {}
         ).exec();
 
         return deletedDoc;
     }
+
+
+
 
 }
