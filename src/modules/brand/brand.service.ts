@@ -4,9 +4,9 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { BrandRepository } from 'src/DATABASE/repository/brand.repository';
 import { IRequest, IResponse, response } from 'src/common';
 import { Types } from 'mongoose';
-import { uploadToCloudinary } from 'src/common/utils/cloudinary';
+import { brandsFolderPath, uploadToCloudinary } from 'src/common/utils/cloudinary';
 import { CreateBrand, GetAllBrands, GetOneBrand, RestoreBrand, UpdatedBrand } from './entities/brand.entity';
-import { deleteFromCloudinary } from 'src/common/utils/cloudinary/cloudinary.delete';
+import { deleteFolderFromCloudinary, deleteImageFromCloudinary } from 'src/common/utils/cloudinary/cloudinary.delete';
 import { Brand } from 'src/DATABASE';
 import { GetAllBrandsQuery } from './dto';
 
@@ -49,9 +49,7 @@ export class BrandService {
       throw new BadRequestException("Fail To Create Brand");
     }
 
-
-
-    const cloudinaryFolder = `E_Commerce/brands/${brand._id}/`;
+    const cloudinaryFolder = `${brandsFolderPath}/${brand._id}/`;
 
     const result = await uploadToCloudinary(file, cloudinaryFolder);
 
@@ -194,7 +192,7 @@ export class BrandService {
     }
 
     if (file) {
-      deleteFromCloudinary(brand.image.public_id);
+      deleteImageFromCloudinary(brand.image.public_id);
     }
 
     return response({
@@ -268,13 +266,28 @@ export class BrandService {
   async removeBrand(_id: Types.ObjectId)
     : Promise<IResponse> {
 
-
-    if (! await this.brandRepository.findOneAndDelete({
+    const brand = await this.brandRepository.findOne({
       filter: { _id },
       pranoId: true
-    })) {
+    });
+
+
+    if (!brand) {
       throw new NotFoundException("Brand Not Found");
     }
+
+
+    await Promise.all([
+
+      this.brandRepository.deleteOne({
+        filter: { _id },
+        pranoId: true
+      }),
+
+      deleteFolderFromCloudinary(`${brandsFolderPath}/${_id}`)
+
+    ])
+
 
 
     return response();
