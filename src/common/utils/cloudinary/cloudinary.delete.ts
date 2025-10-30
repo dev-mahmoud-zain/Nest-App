@@ -1,4 +1,5 @@
-import cloudinary from "./cloudinary.config"; 
+import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
+import cloudinary from "./cloudinary.config";
 
 export const deleteImageFromCloudinary = async (publicId: string): Promise<void> => {
   try {
@@ -9,8 +10,47 @@ export const deleteImageFromCloudinary = async (publicId: string): Promise<void>
   }
 };
 
+
+export async function deleteMultiFromCloudinary(
+  publicIds: string[]
+): Promise<boolean> {
+  try {
+    if (!publicIds.length) return false;
+
+    const results = await Promise.all(
+      publicIds.map(async (publicId) => {
+
+
+        try {
+          const result = await cloudinary.uploader.destroy(publicId);
+
+          if (result.result === 'not found') {
+            throw new BadRequestException(`Image not found`);
+          }
+
+          return true;
+
+        } catch (error) {
+          console.error(`❌ Failed to delete ${publicId}:`, error.message);
+          throw error
+        }
+      })
+    );
+
+    const allDeleted = results.every((r) => r === true);
+
+    return allDeleted;
+
+  } catch (error) {
+    console.error('Error deleting multiple files from Cloudinary:', error);
+    throw new InternalServerErrorException('Error deleting multiple files from Cloudinary');
+  }
+}
+
+
+
 export async function deleteFolderFromCloudinary(folderPath) {
-  
+
   try {
     // Step 1: Delete all files under this folder
     await cloudinary.api.delete_resources_by_prefix(folderPath);

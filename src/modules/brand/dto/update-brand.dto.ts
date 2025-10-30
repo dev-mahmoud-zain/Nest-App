@@ -1,23 +1,11 @@
-import { IsMongoId, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsMongoId} from 'class-validator';
 import { Types } from 'mongoose';
+import { CreateBrandDto } from './create-brand.dto';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class UpdateBrandDto {
-    @IsOptional()
-    @MaxLength(25)
-    @MinLength(2)
-    @IsString()
-    name: string
-
-    @IsOptional()
-    @MaxLength(50)
-    @MinLength(2)
-    @IsString()
-    slogan: string
-}
+export class UpdateBrandDto extends PartialType(CreateBrandDto) {}
 
 export class UpdateBrandParamsDto {
-
     @IsMongoId()
     brandId: Types.ObjectId
-
 }

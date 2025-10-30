@@ -70,7 +70,6 @@ export class TokenService {
             expiresIn: parseInt(process.env.ACCESS_TOKEN_EXPIRES_TIME as string)
         } }: IGenerateToken) => {
 
-        console.log(process.env.ACCESS_TOKEN_EXPIRES_TIME)
 
         return await this.jwtService.signAsync(payload, options)
     }

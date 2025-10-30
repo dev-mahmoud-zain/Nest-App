@@ -1,6 +1,6 @@
 import { InjectModel } from "@nestjs/mongoose";
 import { DatabaseRepository } from "./database.repository";
-import { FilterQuery, Model, MongooseUpdateQueryOptions, UpdateQuery } from "mongoose";
+import {  Model } from "mongoose";
 import { Brand, BrandDocument } from "../models";
 
 export class BrandRepository extends DatabaseRepository<Brand> {

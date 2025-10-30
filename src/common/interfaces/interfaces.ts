@@ -72,10 +72,77 @@ export interface IBrand {
     createdBy: Types.ObjectId,
     updatedBy?: Types.ObjectId,
 
-    image?:  {
+    image?: {
         url: string,
         public_id: string,
     },
+
+
+    freezedAt?: Date,
+    freezedBy?: Types.ObjectId,
+
+    restoredAt?: Date,
+    restoredBy?: Types.ObjectId,
+
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+
+export interface ICategory {
+    _id?: Types.ObjectId,
+
+    name: string,
+    slug: string,
+    description: string,
+
+    image?: {
+        url: string,
+        public_id: string,
+    },
+
+    brands?: Types.ObjectId[] | IBrand[]
+
+    createdBy: Types.ObjectId,
+    updatedBy?: Types.ObjectId,
+
+
+    freezedAt?: Date,
+    freezedBy?: Types.ObjectId,
+
+    restoredAt?: Date,
+    restoredBy?: Types.ObjectId,
+
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+
+export interface IProduct {
+    _id?: Types.ObjectId,
+
+    name: string,
+    slug: string,
+    description: string,
+
+    images?: [{
+        url: string,
+        public_id: string,
+    },]
+
+    brand: Types.ObjectId,
+    category: Types.ObjectId,
+
+    originalPrice: number,
+    discountPercent: number,
+
+    salePrice: number,
+
+    stock: number,
+    soldItems: number
+
+    createdBy: Types.ObjectId,
+    updatedBy?: Types.ObjectId,
 
 
     freezedAt?: Date,
@@ -108,4 +175,10 @@ export interface IResponse<T = any> {
     message?: string,
     statusCode?: number,
     data?: T
+}
+
+
+export interface IImage {
+    url: string,
+    public_id: string
 }

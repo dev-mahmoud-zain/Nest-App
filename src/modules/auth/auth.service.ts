@@ -97,7 +97,7 @@ export class AuthService {
         })
 
         if (!otp) {
-            throw new NotFoundException('OTP not found or expired.');
+            throw new NotFoundException('OTP Not Found or expired.');
         }
 
         if (!await compareHash(OTP_Code, otp.code)) {

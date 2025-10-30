@@ -15,6 +15,8 @@ export class BrandService {
 
   constructor(private readonly brandRepository: BrandRepository) { }
 
+  // ================== Create New Brand ================== 
+
   async createBrand(createBrandDto: CreateBrandDto,
     file: Express.Multer.File,
     userId: Types.ObjectId): Promise<IResponse<CreateBrand>> {
@@ -27,7 +29,7 @@ export class BrandService {
 
     if (brandWithSameName?.freezedAt
     ) {
-      throw new ConflictException(`This Name '${createBrandDto.name}' Is Already Exists With Freezed Account`);
+      throw new ConflictException(`This Name '${createBrandDto.name}' Is Already Exists With Freezed Brand`);
     }
 
     if (brandWithSameName && !brandWithSameName?.freezedAt
@@ -92,6 +94,7 @@ export class BrandService {
 
   }
 
+  // =================== Update Brand =================== 
 
   async updateBrand(
     brandId: Types.ObjectId,
@@ -111,7 +114,6 @@ export class BrandService {
     }
 
 
-    // نتأكد ان الاسم مش موجود عند براند تاني
     if (updatedData.name) {
 
       const brandWithSameName = await this.brandRepository.findOne({
@@ -134,7 +136,6 @@ export class BrandService {
 
     }
 
-    // نتأكد ان اليوزر مش باعت نفس الداتا القديمة
     let duplicatedData: { path: string, value: string }[] = []
 
     if (updatedData.name === brand.name) {
@@ -156,7 +157,6 @@ export class BrandService {
     }
 
 
-    // لو فيه صورة نرفعها
     let image: { url: string, public_id: string } = brand.image;
     if (file) {
       const cloudinaryFolder = `E_Commerce/brands/${brandId}/`;
@@ -187,9 +187,6 @@ export class BrandService {
       throw new InternalServerErrorException("Fail To Update Brand In Database")
     }
 
-    if (!updatedBrand) {
-      throw new InternalServerErrorException("Fail To Update Brand In Database");
-    }
 
     if (file) {
       deleteImageFromCloudinary(brand.image.public_id);
@@ -201,6 +198,7 @@ export class BrandService {
 
   }
 
+  // =================== Freeze Brand =================== 
 
   async freezeBrand(_id: Types.ObjectId, userId: Types.ObjectId) {
 
@@ -224,6 +222,7 @@ export class BrandService {
     return response();
   }
 
+  // =================== Restore Brand =================== 
 
   async restoreFreezedBrand(_id: Types.ObjectId, userId: Types.ObjectId)
     : Promise<IResponse<RestoreBrand>> {
@@ -261,7 +260,7 @@ export class BrandService {
     return response({ data: { restoredBrand } });
   }
 
-
+  // =================== Remove Brand =================== 
 
   async removeBrand(_id: Types.ObjectId)
     : Promise<IResponse> {
@@ -293,7 +292,7 @@ export class BrandService {
     return response();
   }
 
-
+  // =================== Get All Brands =================== 
 
   async getAllBrands(query: GetAllBrandsQuery, freezed?: Boolean): Promise<IResponse<GetAllBrands>> {
 
@@ -329,6 +328,9 @@ export class BrandService {
       }
     });
   }
+
+
+  // =================== Get Brand By Id =================== 
 
   async getOneBrand(_id: Types.ObjectId): Promise<IResponse<GetOneBrand>> {
 

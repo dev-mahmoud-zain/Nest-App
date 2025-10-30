@@ -24,7 +24,6 @@ export class GetAllBrands {
 
 }
 
-
 export class GetOneBrand {
     brand: Brand;
 }

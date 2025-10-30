@@ -19,7 +19,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const date = new Date();
     const now = Date.now();
 
-    const longRequests = ['/brands/update-brand'];
+    const longRequests = ["/brands/update-brand","/categories/create-category","/products/create","/products/update"];
     const isLongRequest = longRequests.some(path => req.path.startsWith(path));
 
     let statusCode = res.statusCode;

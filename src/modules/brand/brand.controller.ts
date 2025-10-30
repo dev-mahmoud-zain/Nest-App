@@ -34,7 +34,7 @@ export class BrandController {
       validation: fileValidation.image
     })
   ))
-  @Post("create-brand")
+  @Post("create")
   createBrand(
     @Req() req: IRequest,
     @Body(new ValidationPipe({
@@ -45,7 +45,7 @@ export class BrandController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 2 * 1024 * 1024,
+            maxSize: 5 * 1024 * 1024,
           })
         ]
       })
@@ -68,7 +68,7 @@ export class BrandController {
       validation: fileValidation.image
     })
   ))
-  @Patch("update-brand/:brandId")
+  @Patch("update/:brandId")
   updateBrand(
     @Param() params: UpdateBrandParamsDto,
     @Req() req: IRequest,
@@ -96,7 +96,7 @@ export class BrandController {
   @SetTokenType(TokenTypeEnum.access)
   @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
-  @Delete('freeze-brand/:brandId')
+  @Delete('freeze/:brandId')
   freezeBrand(
     @Param('brandId') brandId: Types.ObjectId,
     @Req() req: IRequest) {
@@ -111,7 +111,7 @@ export class BrandController {
   @SetTokenType(TokenTypeEnum.access)
   @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
-  @Patch('restore-brand/:brandId')
+  @Patch('restore/:brandId')
   restoreFreezedBrand(
     @Param('brandId') brandId: Types.ObjectId,
     @Req() req: IRequest): Promise<IResponse<RestoreBrand>> {
@@ -126,10 +126,10 @@ export class BrandController {
   @SetTokenType(TokenTypeEnum.access)
   @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
-  @Delete('remove-brand/:brandId')
+  @Delete('remove/:brandId')
   removeBrand(
     @Param('brandId') brandId: Types.ObjectId,
-  ): Promise<IResponse<RestoreBrand>> {
+  ): Promise<IResponse> {
     const _id = new Types.ObjectId(brandId);
 
     return this.brandService.removeBrand(_id);

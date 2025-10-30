@@ -6,15 +6,19 @@ import { ConfigModule } from '@nestjs/config';
 import { usersModule } from './modules/users';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BrandModule } from './modules/brand/brand.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
 
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: "./config/.env", isGlobal: true })
-    , AuthModule
-    , usersModule,
+    ConfigModule.forRoot({ envFilePath: "./config/.env", isGlobal: true }),
+    AuthModule,
+    usersModule,
     BrandModule,
+    CategoryModule,
+    ProductModule,
     MongooseModule.forRoot(process.env.DB_URL as string,),
   ],
 
