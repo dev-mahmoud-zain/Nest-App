@@ -282,30 +282,34 @@ export class ProductService {
         ...filter,
         freezedAt: { $exists: !!freezed }
       },
-      projection: {  },
+      projection: {},
       limit: query.limit,
       page: query.page,
       pranoId: !!freezed
-    }) ;
+    });
 
     return response({
       data: {
         products: result.data,
-        pagination:result.pagination
+        pagination: result.pagination
       }
     });
   }
 
   // ================== Get Product By Id ================== 
 
-  async getOneProduct(_id: Types.ObjectId): Promise<IResponse<getProduct>> {
+  async getProduct(_id: Types.ObjectId, freezed?: Boolean): Promise<IResponse<getProduct>> {
 
     const product = await this.productRepository.findOne({
-      filter: { _id },
+      filter: {
+        _id,
+        freezedAt: { $exists: !!freezed }
+      },
+      pranoId: !!freezed
     })
 
     if (!product) {
-      throw new NotFoundException(`Fail To Find Product Matches With Id : ${_id}`)
+      throw new NotFoundException(`Fail To Find Freezed Product Matches With Id : ${_id}`)
     }
 
     return response({

@@ -160,6 +160,12 @@ export class BrandController {
     return this.brandService.getOneBrand(param.brandId);
   }
 
+  // =================== Get Freezed Brand =================== 
+
+  @Get('freezed/:brandId')
+  getFreezedBrand(@Param() param: GetOneBrandDto): Promise<IResponse<GetOneBrand>> {
+    return this.brandService.getOneBrand(param.brandId,true);
+  }
 
 
 }

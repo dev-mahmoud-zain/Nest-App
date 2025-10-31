@@ -143,10 +143,16 @@ export class ProductController {
   // ================== Get Product By Id ================== 
 
   @Get(':productId')
-  getOneBrand(@Param() param: GetOneProductParamDto): Promise<IResponse<getProduct>> {
-    return this.productService.getOneProduct(param.productId);
+  getProduct(@Param() param: GetOneProductParamDto): Promise<IResponse<getProduct>> {
+    return this.productService.getProduct(param.productId);
   }
 
-  
+  // ================== Get Freezed Product ================== 
+
+
+  @Get('freezed/:productId')
+  getFreezedProduct(@Param() param: GetOneProductParamDto): Promise<IResponse<getProduct>> {
+    return this.productService.getProduct(param.productId,true);
+  }
 
 }

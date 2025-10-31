@@ -338,15 +338,18 @@ export class BrandService {
 
   // =================== Get Brand By Id =================== 
 
-  async getOneBrand(_id: Types.ObjectId): Promise<IResponse<GetOneBrand>> {
+  async getOneBrand(_id: Types.ObjectId, freezed?: Boolean): Promise<IResponse<GetOneBrand>> {
 
     const brand = await this.brandRepository.findOne({
-      filter: { _id },
-      select: { name: 1, slogan: 1, image: 1, slug: 1 }
+      filter: {
+        _id,
+        freezedAt: { $exists: !!freezed }
+      },
+      pranoId: !!freezed
     })
 
     if (!brand) {
-      throw new NotFoundException(`Fail To Find Brand Matches With Id : ${_id}`)
+      throw new NotFoundException(`Fail To Find Freezed Brand Matches With Id : ${_id}`)
     }
 
     return response({

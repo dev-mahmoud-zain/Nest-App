@@ -387,15 +387,18 @@ export class CategoryService {
   // =================== Get Category By Id =================== 
 
 
-  async getOneCategory(_id: Types.ObjectId): Promise<IResponse<GetOneCategory>> {
+  async getOneCategory(_id: Types.ObjectId, freezed?: Boolean): Promise<IResponse<GetOneCategory>> {
 
     const category = await this.categoryRepository.findOne({
-      filter: { _id },
-      select: { name: 1, slogan: 1, image: 1, slug: 1 }
+      filter: {
+        _id,
+        freezedAt: { $exists: !!freezed }
+      },
+      pranoId: !!freezed
     })
 
     if (!category) {
-      throw new NotFoundException(`Fail To Find Category Matches With Id : ${_id}`)
+      throw new NotFoundException(`Fail To Find Freezed Category Matches With Id : ${_id}`)
     }
 
     return response({

@@ -151,11 +151,22 @@ export class CategoryController {
     return this.categoryService.getAllCategories(query, true);
   }
 
-    // =================== Get Category By Id =================== 
+  // =================== Get Category By Id =================== 
 
   @Get(':categoryId')
   getOneBrand(@Param() param: GetOneCategoryDto): Promise<IResponse<GetOneCategory>> {
     return this.categoryService.getOneCategory(param.categoryId);
   }
 
+
+  // ================== Get Category Product ================== 
+
+
+
+
+  @Get('freezed/:categoryId')
+  getFreezedProduct(@Param() param: GetOneCategoryDto): Promise<IResponse<GetOneCategory>> {
+        return this.categoryService.getOneCategory(param.categoryId,true);
+
+  }
 }
