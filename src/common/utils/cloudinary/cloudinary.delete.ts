@@ -73,8 +73,17 @@ export async function deleteFolderFromCloudinary(folderPath) {
       await cloudinary.api.delete_folder(folderPath);
     }
   } catch (error) {
-    if (error.http_code !== 404) {
-      console.error(`❌ Error deleting folder "${folderPath}":`, error.message || error);
+
+
+    if (error.error.http_code === 404) {
+      console.warn(`⚠️ Folder not found: ${folderPath}`);
+      return; // تجاهل بس ما ترميش
     }
+
+
+    throw new InternalServerErrorException(
+      `Error deleting folder "${folderPath}": ${error.message || error}`
+    );
+
   }
 }

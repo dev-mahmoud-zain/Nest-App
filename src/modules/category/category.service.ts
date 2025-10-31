@@ -324,21 +324,27 @@ export class CategoryService {
       throw new NotFoundException("Category Not Found");
     }
 
+    try {
 
-    await Promise.all([
+      await Promise.all([
 
-      this.categoryRepository.deleteOne({
-        filter: { _id },
-        pranoId: true
-      }),
+        deleteFolderFromCloudinary(`${categoriesFolderPath}/${_id}`),
 
-      deleteFolderFromCloudinary(`${categoriesFolderPath}/${_id}`)
+        this.categoryRepository.deleteOne({
+          filter: { _id },
+          pranoId: true
+        }),
 
-    ])
+      ]);
+
+      return response();
+
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Failed To Delete Category');
+    }
 
 
-
-    return response();
   }
 
   // =================== Get All Categories =================== 

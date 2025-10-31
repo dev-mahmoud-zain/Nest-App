@@ -5,10 +5,11 @@ import { ProductRepository } from 'src/DATABASE/repository/product.repository';
 import { BrandRepository } from 'src/DATABASE/repository/brand.repository';
 import { CategoryRepository } from 'src/DATABASE/repository/category.repository';
 import { AppHelper } from 'src/common/app-helper';
-import { deleteMultiFromCloudinary, productsFolderPath, uploadMultiImagesToCloudinary, uploadToCloudinary } from 'src/common/utils/cloudinary';
+import { deleteFolderFromCloudinary, deleteMultiFromCloudinary, productsFolderPath, uploadMultiImagesToCloudinary, uploadToCloudinary } from 'src/common/utils/cloudinary';
 import { IImage, IResponse, response } from 'src/common';
-import { CreateProduct, UpdateProduct } from './entities';
+import { CreateProduct, getAllProducts, getProduct, UpdateProduct } from './entities';
 import { Product } from 'src/DATABASE';
+import { GetAllProductsDto } from './dto/get.products.dto';
 
 
 @Injectable()
@@ -164,38 +165,154 @@ export class ProductService {
   // ================== Freeze Product ================== 
 
 
+  async freezeProduct(_id: Types.ObjectId, userId: Types.ObjectId) {
 
+
+    if (!await this.productRepository.findOne({
+      filter: {
+        _id
+      }
+    })) {
+      throw new NotFoundException("Product Not Exists");
+    }
+
+    await this.productRepository.updateOne({
+      _id
+    }, {
+      $set: {
+        freezedAt: new Date(),
+        freezedBy: userId,
+      }
+    });
+
+    return response();
+  }
 
   // ================== Restore Product ================== 
 
+  async restoreProduct(_id: Types.ObjectId, userId: Types.ObjectId)
+    : Promise<IResponse<getProduct>> {
 
 
+    if (!await this.productRepository.findOne({
+      filter: {
+        _id,
+        freezedAt: { $exists: true },
+        freezedBy: { $exists: true },
+      },
+      pranoId: true
+    })) {
+      throw new NotFoundException("No Matched Product");
+    }
 
-  // ================== Restore Product ================== 
+    const product = await this.productRepository.findOneAndUpdate({
+      filter: {
+        _id
+      }, updateData: {
+        $set: {
+          restoredAt: new Date(),
+          restoredBy: userId
+        },
+        $unset: {
+          freezedAt: true,
+          freezedBy: true,
+        }
+      }, pranoId: true
+    })
 
+    if (!product) {
+      throw new InternalServerErrorException("Fail To Restore Product");
+    }
 
-
+    return response({ data: { product } });
+  }
 
   // =================== Remove Product =================== 
 
+  async removeProduct(_id: Types.ObjectId)
+    : Promise<IResponse> {
 
+    const product = await this.productRepository.findOne({ filter: { _id } });
 
-  // =================== Get Products =================== 
+    if (!product) {
+      throw new NotFoundException(`Product With Id : ${_id} Is Not Exists`);
+    }
 
+    try {
 
+      await Promise.all([
 
+        deleteFolderFromCloudinary(`${productsFolderPath}/${_id}`),
 
-  // ================== Get Freezed Products ================== 
+        this.productRepository.findOneAndDelete({
+          filter: { _id }, pranoId: true
+        })
 
+      ]);
 
+      return response();
 
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Failed To Delete Product');
+    }
 
-  // ================== Get Freezed Products ================== 
+  }
 
+  // =================== Get All Products =================== 
 
+  async getAllProducts(query: GetAllProductsDto, freezed?: Boolean): Promise<IResponse<getAllProducts>> {
 
+    let filter = {
+    };
+
+    if (query.search) {
+      const searchRegex = new RegExp(query.search, 'i');
+      filter = {
+        $or: [
+          { name: searchRegex },
+          { slogan: searchRegex },
+          { description: searchRegex },
+        ],
+      };
+    }
+
+    const result = await this.productRepository.find({
+      filter: {
+        ...filter,
+        freezedAt: { $exists: !!freezed }
+      },
+      projection: {  },
+      limit: query.limit,
+      page: query.page,
+      pranoId: !!freezed
+    }) ;
+
+    return response({
+      data: {
+        products: result.data,
+        pagination:result.pagination
+      }
+    });
+  }
 
   // ================== Get Product By Id ================== 
+
+  async getOneProduct(_id: Types.ObjectId): Promise<IResponse<getProduct>> {
+
+    const product = await this.productRepository.findOne({
+      filter: { _id },
+    })
+
+    if (!product) {
+      throw new NotFoundException(`Fail To Find Product Matches With Id : ${_id}`)
+    }
+
+    return response({
+      data: { product }
+    });
+  }
+
 
 
 }

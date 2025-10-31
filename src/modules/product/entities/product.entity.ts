@@ -13,5 +13,11 @@ export class getProduct {
 }
 
 export class getAllProducts {
-    products: [Product]
+    products: Product[];
+    pagination: {
+        page: number,
+        limit: number,
+        totalPages: number,
+        total: number,
+    }
 }

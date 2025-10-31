@@ -275,21 +275,27 @@ export class BrandService {
       throw new NotFoundException("Brand Not Found");
     }
 
+    try {
 
-    await Promise.all([
+      await Promise.all([
 
-      this.brandRepository.deleteOne({
-        filter: { _id },
-        pranoId: true
-      }),
+        deleteFolderFromCloudinary(`${brandsFolderPath}/${_id}`),
 
-      deleteFolderFromCloudinary(`${brandsFolderPath}/${_id}`)
+        this.brandRepository.deleteOne({
+          filter: { _id },
+          pranoId: true
+        }),
 
-    ])
+      ]);
+
+      return response();
+
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Failed To Delete Brand');
+    }
 
 
-
-    return response();
   }
 
   // =================== Get All Brands =================== 
