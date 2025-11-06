@@ -1,7 +1,7 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 import slugify from "slugify";
-import { generateHash, I_OTP, IBrand, OTP_TypeEnum } from "src/common";
+import { IBrand } from "src/common";
 
 @Schema({
     timestamps: true,
@@ -9,7 +9,6 @@ import { generateHash, I_OTP, IBrand, OTP_TypeEnum } from "src/common";
     toObject: { virtuals: true },
     strictQuery: true
 })
-
 export class Brand implements IBrand {
 
     @Prop({ type: String, required: true, unique: true, min: 2, maxLength: 25 })
@@ -34,12 +33,11 @@ export class Brand implements IBrand {
         public_id: string,
     };
 
-
     @Prop({ type: Types.ObjectId, ref: "User", required: true })
-    createdBy: Types.ObjectId
+    createdBy: Types.ObjectId;
 
     @Prop({ type: Types.ObjectId, ref: "User" })
-    updatedBy: Types.ObjectId
+    updatedBy: Types.ObjectId;
 
     @Prop({ type: Date })
     freezedAt?: Date;
@@ -52,25 +50,21 @@ export class Brand implements IBrand {
 
     @Prop({ type: Types.ObjectId, ref: "User" })
     restoredBy?: Types.ObjectId;
-
-};
+}
 
 const BrandSchema = SchemaFactory.createForClass(Brand);
 
 BrandSchema.pre("save", function (next) {
-
     if (this.isModified("name")) {
         this.slug = slugify(this.name);
     }
     next();
-
-})
-
-BrandSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
+});
 
 export type BrandDocument = HydratedDocument<Brand>;
 
 export const BrandModel = MongooseModule.forFeature([
     { name: Brand.name, schema: BrandSchema }
 ]);
+
+export { BrandSchema };

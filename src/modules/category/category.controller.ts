@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Req, ValidationPipe, UploadedFile, ParseFilePipe, MaxFileSizeValidator, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Req, ValidationPipe, UploadedFile, ParseFilePipe, MaxFileSizeValidator, BadRequestException, Query, UsePipes } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto, UpdateCategoryParamsDto } from './dto/update-category.dto';
@@ -16,7 +16,10 @@ import { GetAllCategoriesQuery, GetOneCategoryDto } from './dto';
 
 
 
-
+@UsePipes(new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true
+    }))
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
@@ -34,10 +37,7 @@ export class CategoryController {
   @Post("create")
   createCategory(
     @Req() req: IRequest,
-    @Body(new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true
-    })) createCategoryDto: CreateCategoryDto,
+    @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -71,10 +71,7 @@ export class CategoryController {
   updateCategory(
     @Param() params: UpdateCategoryParamsDto,
     @Req() req: IRequest,
-    @Body(new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true
-    })) updateCategoryData: UpdateCategoryDto,
+    @Body() updateCategoryData: UpdateCategoryDto,
     @UploadedFile() file: Express.Multer.File
   )
     : Promise<IResponse<UpdatedCategory>> {
@@ -145,7 +142,9 @@ export class CategoryController {
 
   // =================== Get All Freezed =================== 
 
-
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get("all-freezed")
   getAllFreezed(@Query() query: GetAllCategoriesQuery): Promise<IResponse<GetAllCategories>> {
     return this.categoryService.getAllCategories(query, true);
@@ -163,7 +162,9 @@ export class CategoryController {
 
 
 
-
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get('freezed/:categoryId')
   getFreezedProduct(@Param() param: GetOneCategoryDto): Promise<IResponse<GetOneCategory>> {
         return this.categoryService.getOneCategory(param.categoryId,true);

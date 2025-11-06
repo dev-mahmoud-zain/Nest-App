@@ -4,13 +4,17 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import * as express from "express"
 import path from 'node:path';
 import { ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 const port = process.env.PORT ?? 5000;
-
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ['error', 'warn'] });
 
-  app.useGlobalInterceptors(new LoggingInterceptor)
+  app.enableCors();
+
+  app.use("/order/webhook",express.raw({type:"application/json"}));
+
+  app.useGlobalInterceptors(new LoggingInterceptor, new ResponseInterceptor)
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -27,3 +31,5 @@ async function bootstrap() {
   });
 }
 bootstrap();
+
+

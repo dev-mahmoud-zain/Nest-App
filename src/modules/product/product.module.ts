@@ -3,7 +3,7 @@ import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { BrandModel, CategoryModel, ProductModel, TokenModel, TokenRepository, UserModel, UserRepository } from 'src/DATABASE';
 import { TokenService } from 'src/common/services/token.service';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ProductRepository } from 'src/DATABASE/repository/product.repository';
 import { BrandRepository } from 'src/DATABASE/repository/brand.repository';

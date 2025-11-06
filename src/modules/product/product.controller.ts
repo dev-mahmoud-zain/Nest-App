@@ -133,7 +133,9 @@ export class ProductController {
 
   // ================== Get Freezed Products ================== 
 
-
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get("freezed")
   getAllFreezedProducts(@Query() query: GetAllProductsDto): Promise<IResponse<getAllProducts>> {
     return this.productService.getAllProducts(query, true);
@@ -149,7 +151,9 @@ export class ProductController {
 
   // ================== Get Freezed Product ================== 
 
-
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get('freezed/:productId')
   getFreezedProduct(@Param() param: GetOneProductParamDto): Promise<IResponse<getProduct>> {
     return this.productService.getProduct(param.productId,true);

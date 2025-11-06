@@ -6,7 +6,7 @@ import { Brand, BrandDocument } from "../models";
 export class BrandRepository extends DatabaseRepository<Brand> {
 
     constructor(
-        @InjectModel(Brand.name)
+        @InjectModel("Brand")
         protected override readonly model: Model<BrandDocument>
     ) {
         super(model)

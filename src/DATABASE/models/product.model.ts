@@ -91,7 +91,6 @@ ProductSchema.pre("validate", function (next) {
 
 })
 
-ProductSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export type ProductDocument = HydratedDocument<Product>;
 

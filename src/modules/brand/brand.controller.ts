@@ -146,10 +146,12 @@ export class BrandController {
 
   // =================== Get All Freezed =================== 
 
-
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get("all-freezed")
   getAllFreezed(@Query() query: GetAllBrandsQuery): Promise<IResponse<GetAllBrands>> {
-    return this.brandService.getAllBrands(query,true);
+    return this.brandService.getAllBrands(query, true);
   }
 
   // =================== Get Brand By Id =================== 
@@ -162,9 +164,12 @@ export class BrandController {
 
   // =================== Get Freezed Brand =================== 
 
+  @SetTokenType(TokenTypeEnum.access)
+  @SetAccessRoles([RoleEnum.super_admin, RoleEnum.admin])
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get('freezed/:brandId')
   getFreezedBrand(@Param() param: GetOneBrandDto): Promise<IResponse<GetOneBrand>> {
-    return this.brandService.getOneBrand(param.brandId,true);
+    return this.brandService.getOneBrand(param.brandId, true);
   }
 
 

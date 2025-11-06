@@ -69,7 +69,6 @@ CategorySchema.pre("save", function (next) {
 
 })
 
-CategorySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export type CategoryDocument = HydratedDocument<Category>;
 

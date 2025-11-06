@@ -5,7 +5,7 @@ export const fileValidation = {
         "image/png",    // صور PNG
         "image/webp",   // WebP، حجم أقل وجودة عالية
         "image/bmp",    // BMP، أقل شيوعاً
-        // "image/svg+xml",// صور SVG، رسوميات متجهية
+        "image/svg+xml",
         // "image/tiff"    // TIFF، جودة عالية للطباعة
     ]
 }

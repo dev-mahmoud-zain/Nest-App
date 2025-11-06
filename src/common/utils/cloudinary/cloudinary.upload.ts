@@ -1,6 +1,5 @@
 import { UploadApiResponse } from 'cloudinary';
 import cloudinary from './cloudinary.config';
-import { InternalServerErrorException } from '@nestjs/common';
 import { deleteFolderFromCloudinary } from './cloudinary.delete';
 import { IImage } from 'src/common/interfaces';
 
@@ -23,7 +22,6 @@ export async function uploadToCloudinary(
     upload.end(file.buffer);
   });
 }
-
 
 export async function uploadMultiImagesToCloudinary(
   files: Express.Multer.File[],

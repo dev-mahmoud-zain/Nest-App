@@ -19,7 +19,11 @@ export class LoggingInterceptor implements NestInterceptor {
     const date = new Date();
     const now = Date.now();
 
-    const longRequests = ["/brands/update-brand","/categories/create-category","/products/create","/products/update"];
+    const longRequests = ["/brands/update-brand",
+      "/categories/create-category",
+      "/products/create",
+      "/products/update",];
+
     const isLongRequest = longRequests.some(path => req.path.startsWith(path));
 
     let statusCode = res.statusCode;
@@ -40,7 +44,7 @@ export class LoggingInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        timeout(5000),
+        timeout(10000),
         catchError(err => {
           if (err instanceof TimeoutError) {
             statusCode = 408;

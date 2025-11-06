@@ -5,9 +5,6 @@ import { TokenModel, TokenRepository, UserModel, UserRepository } from "src/DATA
 import { JwtService } from "@nestjs/jwt";
 import { TokenService } from "src/common/services/token.service";
 import { AuthModule } from "../auth/auth.module";
-import { MulterModule } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { randomUUID } from "crypto";
 
 @Module({
     imports: [TokenModel, UserModel, TokenModel,],
@@ -23,4 +20,4 @@ import { randomUUID } from "crypto";
         AuthModule,
     ]
 })
-export class usersModule { }
+export class userModule { }

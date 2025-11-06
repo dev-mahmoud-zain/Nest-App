@@ -30,12 +30,25 @@ export class AppHelper {
 
     checkDuplicates(arr: any[], name: string) {
         const seen = new Set();
-        const duplicates = arr.filter(id => seen.size === seen.add(id).size);
+        const duplicates = arr.filter(id => {
+            if (seen.has(id)) return true;
+            seen.add(id);
+            return false;
+        });
 
         if (duplicates.length > 0) {
-            throw new BadRequestException(`Duplicated ${name} ${duplicates.join(", ")}`);
+            throw new BadRequestException({
+                statusCode: 400,
+                message: `Some ${name} values are duplicated`,
+                error: "Bad Request",
+                details: {
+                    duplicates,
+                    count: duplicates.length,
+                },
+            });
         }
     }
+
 
 
     checkBrands = async function (ids: Types.ObjectId[] | string[], brands: BrandDocument[]) {

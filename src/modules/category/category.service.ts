@@ -57,7 +57,7 @@ export class CategoryService {
 
 
     if (brands) {
-      this.appHelper.checkBrands(brands, brandsData.data);
+      await this.appHelper.checkBrands(brands, brandsData.data);
     };
 
 

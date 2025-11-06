@@ -6,7 +6,7 @@ import { Category, CategoryDocument } from "../models";
 export class CategoryRepository extends DatabaseRepository<Category> {
 
     constructor(
-        @InjectModel(Category.name)
+        @InjectModel("Category")
         protected override readonly model: Model<CategoryDocument>
     ) {
         super(model)

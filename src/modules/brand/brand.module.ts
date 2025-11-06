@@ -7,7 +7,7 @@ import { TokenService } from 'src/common/services/token.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [BrandModel, TokenModel,UserModel],
+  imports: [BrandModel, TokenModel, UserModel],
   controllers: [BrandController],
   providers: [BrandService,
     BrandRepository,
@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
     TokenService,
     JwtService,
     UserRepository,
-    TokenRepository],
+    TokenRepository,
+    ],
 })
 export class BrandModule { }
