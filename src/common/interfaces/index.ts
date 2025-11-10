@@ -14,3 +14,6 @@ export * from "./common-interfaces/image.interface";
 export * from "./common-interfaces/multer.interface";
 export * from "./common-interfaces/request.interface";
 export * from "./common-interfaces/response.interface";
+
+
+export * from "./socket/socket.interface";

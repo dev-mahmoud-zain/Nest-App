@@ -12,6 +12,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { OrderModule } from './modules/order/order.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RealTimeModule } from './modules/gateway';
 
 
 
@@ -27,6 +28,7 @@ import { AuthModule } from './modules/auth/auth.module';
     WishlistModule,
     OrderModule,
     CouponModule,
+    RealTimeModule,
     MongooseModule.forRoot(process.env.DB_URL as string,),
   ],
 

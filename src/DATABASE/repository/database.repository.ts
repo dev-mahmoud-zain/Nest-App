@@ -180,7 +180,10 @@ export abstract class DatabaseRepository<
         finalFilter,
         {
           ...updateData,
-          $inc: { __v: 1 },
+          $inc: {
+            ...(updateData.$inc || {}),
+            __v: 1,
+          },
         },
         {
           ...options,

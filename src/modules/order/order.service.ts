@@ -25,7 +25,7 @@ import {
 } from 'src/common';
 import dayjs from 'dayjs';
 import { Request } from 'express';
-import Stripe from 'stripe';
+import { RealTimeGateWay } from '../gateway';
 
 @Injectable()
 export class OrderService {
@@ -35,6 +35,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly couponRepository: CouponRepository,
     private readonly paymentService: PaymentService,
+    private readonly realTimeGateWay: RealTimeGateWay,
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto, userId: Types.ObjectId) {
@@ -183,12 +184,25 @@ export class OrderService {
       throw new InternalServerErrorException('Fail To Crate Order');
     }
 
+    const updatedProductsStock: { productId: Types.ObjectId; stock: Number }[] =
+      [];
+
     for (const product of products) {
-      const result = await this.productRepository.updateOne(
-        { _id: product.productId },
-        { $inc: { stock: -product.quantity } },
-      );
+      
+      const result = await this.productRepository.findOneAndUpdate({
+        filter: {
+          _id: product.productId,
+        },
+        updateData: { $inc: { stock: -product.quantity } },
+      });
+
+      updatedProductsStock.push({
+        productId: result?._id as Types.ObjectId,
+        stock: result?.stock as Number,
+      });
     }
+
+    this.realTimeGateWay.changeProductStock(updatedProductsStock);
 
     this.cartRepository.deleteOne({
       createdBy: userId,

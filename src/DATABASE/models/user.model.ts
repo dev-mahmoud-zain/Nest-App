@@ -104,3 +104,6 @@ export type UserDocument = HydratedDocument<User>;
 export const UserModel = MongooseModule.forFeature([
     { name: User.name, schema: userSchema }
 ])
+
+
+export const connectedSockets= new Map<string,string[]>();

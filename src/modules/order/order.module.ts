@@ -8,6 +8,7 @@ import { BrandModel, BrandRepository, CartModel, CartRepository, CategoryModel, 
 import { AppHelper } from 'src/common/app-helper';
 import { OrderRepository } from 'src/DATABASE/repository/order.repository';
 import { PaymentService } from 'src/common';
+import { RealTimeGateWay } from '../gateway';
 
 @Module({
   imports:[CategoryModel, BrandModel, TokenModel,UserModel,ProductModel,CartModel,OrderModel,CouponModel],
@@ -25,7 +26,8 @@ import { PaymentService } from 'src/common';
     ProductRepository,
     OrderRepository,
     CouponRepository,
-    PaymentService
+    PaymentService,
+    RealTimeGateWay
   ],
 })
 export class OrderModule { }
